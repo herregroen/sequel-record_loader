@@ -19,10 +19,10 @@ module Sequel
       data.each do |klass, items|
         klass = klass.split('::').inject(Object) {|o,c| o.const_get c}
         items.each do |item|
-          if model = klass[item.where]
-            model.update_all item.attributes
+          if model = klass[item['where']]
+            model.update_all item['attributes']
           else
-            klass.create item.attributes.merge(item.where.is_a?(Hash) ? item.where : {}) 
+            klass.create item['attributes'].merge(item['where'].is_a?(Hash) ? item['where'] : {})
           end
         end
       end
