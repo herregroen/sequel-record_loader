@@ -19,7 +19,7 @@ module Sequel
       data.each do |klass, items|
         klass = klass.split('::').inject(Object) {|o,c| o.const_get c}
         items.each do |item|
-          if model = klass[item['where']]
+          if model = klass[Hash[item['where'].map{ |k,v| [k.to_sym, v] }]]
             model.update_all item['attributes']
           else
             klass.create item['attributes'].merge(item['where'].is_a?(Hash) ? item['where'] : {})
