@@ -19,7 +19,7 @@ module Sequel
       data.each do |klass, items|
         klass = klass.split('::').inject(Object) {|o,c| o.const_get c}
         items.each do |item|
-          if model = find_record klass, item['where']
+          if model = find_record(klass, item['where'])
             model.update_all item['attributes']
           else
             klass.create item['attributes'].merge(item['where'].is_a?(Hash) ? item['where'] : {})
@@ -29,17 +29,18 @@ module Sequel
       data.each do |klass, items|
         klass = klass.split('::').inject(Object) {|o,c| o.const_get c}
         items.each do |item|
-          model = find_record klass, item['where']
+          model = find_record(klass, item['where'])
+          next unless item['associations']
           item['associations'].each do |association, records|
-            refl  = model.association_reflection(association.to_sym)
+            refl  = klass.association_reflection(association.to_sym)
             other = refl[:class_name].split('::').inject(Object) {|o,c| o.const_get c}
-            if relf[:cartesian_product_number] == 0
-              if m = find_record other, records
+            if refl[:cartesian_product_number] == 0
+              if m = find_record(other, records)
                 model.send(refl.setter_method, m)
               end
             else
               records.each do |record|
-                if m = find_record(k, record) and not model.send(refl.dataset_method)[m[m.primary_key]]
+                if m = find_record(other, record) and not model.send(refl.dataset_method)[m[m.primary_key]]
                   model.send(refl.add_method, m)
                 end
               end # records.each
