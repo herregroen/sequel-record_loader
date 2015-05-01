@@ -19,7 +19,7 @@ And then execute:
 You need a file describing your records:
 
 ```yaml
-users:
+User:
   - where:
       username: test
       email: test@example.com
@@ -27,6 +27,15 @@ users:
       firstname: bob
       lastname: bobson
       dob: 18-10-1985
+    associations:
+      address:
+        street: 5th avenue
+        number: 102
+      siblings:
+        - firstname: babette
+          lastname: bobson
+        - firstname: bobby
+          lastname: bobson
   - where: 3
     attributes:
       firstname: john
