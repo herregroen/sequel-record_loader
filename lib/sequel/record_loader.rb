@@ -20,7 +20,7 @@ module Sequel
         klass = klass.split('::').inject(Object) {|o,c| o.const_get c}
         items.each do |item|
           if model = find_record(klass, item['where'])
-            model.update_all item['attributes']
+            model.update item['attributes']
           else
             klass.create item['attributes'].merge(item['where'].is_a?(Hash) ? item['where'] : {})
           end
